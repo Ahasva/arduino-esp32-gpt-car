@@ -6,22 +6,27 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-document.getElementById('weatherModeButton').addEventListener('click', () => {
-    autopilotRunning = false;
+async function stopAutopilotAndCar() {
+  autopilotRunning = false;
+  try { await fetch('/stopAll', { method: 'POST' }); } catch {}
+}
+
+document.getElementById('weatherModeButton').addEventListener('click', async () => {
+    await stopAutopilotAndCar();
     mode = 'weather';
     addMessage("Weather mode activated!", "assistant");
     document.getElementById('carControlContainer').style.display = 'none';
 });
 
-document.getElementById('chatModeButton').addEventListener('click', () => {
-    autopilotRunning = false;
+document.getElementById('chatModeButton').addEventListener('click', async () => {
+    await stopAutopilotAndCar();
     mode = 'chat';
     addMessage("Chat mode activated!", "assistant");
     document.getElementById('carControlContainer').style.display = 'none';
 });
 
-document.getElementById('carModeButton').addEventListener('click', () => {
-    autopilotRunning = false;
+document.getElementById('carModeButton').addEventListener('click', async () => {
+    await stopAutopilotAndCar();
     mode = 'car';
     addMessage("Car mode activated!", "assistant");
     document.getElementById('carControlContainer').style.display = 'block';
@@ -39,14 +44,17 @@ document.getElementById('autopilotStartBtn').addEventListener('click', () => {
     }
     autopilotGoal = goal;
     autopilotRunning = true;
+
+    mode = 'car';
+    document.getElementById('carControlContainer').style.display = 'block';
+
     addMessage("Autopilot START: " + autopilotGoal, "assistant");
     autopilotLoop();
 });
 
 document.getElementById('autopilotStopBtn').addEventListener('click', async () => {
-    autopilotRunning = false;
     addMessage("Autopilot STOP", "assistant");
-    try { await fetch('/stopAll', { method: 'POST' }); } catch {}
+    await stopAutopilotAndCar();
 });
 
 document.getElementById('submitButton').addEventListener('click', () => {
@@ -258,16 +266,12 @@ window.onload = function() {
     getObstacleStatus();
 };
 
-window.addEventListener("blur", () => {
-  autopilotRunning = false;
-  sendCommand("stop");
+window.addEventListener("blur", async () => {
+  await stopAutopilotAndCar();
 });
 
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    autopilotRunning = false;
-    sendCommand("stop");
-  }
+document.addEventListener("visibilitychange", async () => {
+  if (document.hidden) await stopAutopilotAndCar();
 });
 
 setInterval(getObstacleStatus, 1000);
