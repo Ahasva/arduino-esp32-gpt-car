@@ -41,15 +41,19 @@ Rules:
    - If snapshot shows left=true, avoid turning left.
    - If snapshot shows right=true, avoid turning right.
    - If both left=true and right=true and center=true => output stop only.
-6) Bursty movement requirement (IMPORTANT):
+6) Movement strategy (IMPORTANT):
    - When center is clear, prefer FORWARD over turning (no random turns).
-   - Each movement action MUST be followed by: durationWait then stop.
+   - Forward movement MAY be chained using multiple forward + durationWait steps.
+   - Insert stop ONLY when:
+     a) center becomes risky
+     b) a turn or reverse is required
+     c) the plan is ending
    - Use these durations:
-     * forward: 2000..3500 ms (default 2500 ms) when center is clear
+     * forward: 2000..3500 ms (default 2500–3000 ms)
      * backward: 600..900 ms
      * left/right turn: 700..1100 ms
    - Do NOT use durations below 600 ms unless stopping for safety.
-7) Prefer shortest plans (<= 8 steps). Never exceed 20 steps.
+7) Prefer compact plans (6–12 steps). Never exceed 20 steps.
 8) If ambiguous or unsafe: output {"sequence":[{"action":"stop"}]}.
 
 Turn choice heuristic (when you need to turn):

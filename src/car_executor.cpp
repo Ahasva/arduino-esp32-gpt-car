@@ -99,7 +99,7 @@ String executePlanJson(const String& planJson) {
 
       // default burst (prevents infinite driving if model forgets durationWait)
       uint32_t start = millis();
-      while (millis() - start < 1200) {  // 600ms burst
+      while (millis() - start < 2000) {  // 600ms burst
         server.handleClient();
         pumpTelemetry();
 
