@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArduinoRoboCar</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Arduino-ESP32-GPT</h1>
+
+        <div class="mode-container">
+            <button id="carModeButton" class="mode-btn">Car Mode</button>
+            <button id="chatModeButton" class="mode-btn">Chat Mode</button>
+            <button id="weatherModeButton" class="mode-btn">Weather Mode</button>
+        </div>
+
+        <div id="contentContainer">
+            <div id="messageContainer"></div>
+
+            <div id="carControlContainer">
+                <div id="distanceText">Distance: -- cm</div>
+                <div id="sensorStatus">
+                    <div class="sensor" id="leftSensor"></div>
+                    <div class="sensor" id="centerSensor"></div>
+                    <div class="sensor" id="rightSensor"></div>
+                </div>
+
+                <div id="controlContainer">
+                    <div class="row">
+                        <button class="drive-btn"
+                            onmousedown="sendCommand('forward')" onmouseup="sendCommand('stop')" onmouseleave="sendCommand('stop')"
+                            ontouchstart="sendCommand('forward')" ontouchend="sendCommand('stop')" ontouchcancel="sendCommand('stop')">
+                            Forward
+                        </button>
+                    </div>
+                    <div id="middleRow">
+                        <button class="drive-btn"
+                            onmousedown="sendCommand('left')" onmouseup="sendCommand('stop')" onmouseleave="sendCommand('stop')"
+                            ontouchstart="sendCommand('left')" ontouchend="sendCommand('stop')" ontouchcancel="sendCommand('stop')">
+                            Left
+                        </button>
+                        <button class="drive-btn"
+                            onmousedown="sendCommand('backward')" onmouseup="sendCommand('stop')" onmouseleave="sendCommand('stop')"
+                            ontouchstart="sendCommand('backward')" ontouchend="sendCommand('stop')" ontouchcancel="sendCommand('stop')">
+                            Backward
+                        </button>
+                        <button class="drive-btn"
+                            onmousedown="sendCommand('right')" onmouseup="sendCommand('stop')" onmouseleave="sendCommand('stop')"
+                            ontouchstart="sendCommand('right')" ontouchend="sendCommand('stop')" ontouchcancel="sendCommand('stop')">
+                            Right
+                        </button>
+                    </div>
+                    <div class="row">
+                        <button class="drive-btn drive-stop" onclick="sendCommand('stop')">Stop</button>
+                        <button class="drive-btn drive-stop" onclick="fetch('/stopAll',{method:'POST'})">E-STOP</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-row">
+            <input type="text" id="userInput" placeholder="Enter your message">
+            <button id="submitButton" class="chat-btn">Send</button>
+        </div>
+    </div>
+</body>
+</html>

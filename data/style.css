@@ -1,0 +1,228 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding-top: 50px;
+    background: black;
+    color: white;
+    text-align: center;
+    font-family: "Gill Sans Extrabold", sans-serif;
+}
+
+.container {
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    background-color: black;
+    padding: 20px;
+    border-radius: 30px;
+    border: 1px solid deeppink;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.mode-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+#contentContainer {
+    display: flex;
+}
+
+#carControlContainer {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid deeppink;
+    border-radius: 30px;
+    margin-bottom: 10px;
+    background-color: black;
+
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#messageContainer {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid deeppink;
+    border-radius: 30px;
+    margin-bottom: 10px;
+    background-color: white;
+
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid deeppink;
+    border-radius: 30px;
+}
+
+.input-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.input-row input {
+    flex: 1;
+    margin: 0;
+}
+
+
+
+.message {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message.assistant {
+    justify-content: flex-start;
+}
+
+.message p {
+    color: black;
+    font-size: 12px;
+    max-width: 80%;
+    padding: 10px;
+    border-radius: 30px;
+    background-color: deeppink;
+    margin: 0;
+}
+
+.message.user p {
+    background-color: dodgerblue;
+}
+
+
+
+/*
+CAR CONTROL
+*/
+/* MODE buttons (top row) */
+
+.mode-btn {
+  width: auto;              /* let them size to text */
+  height: 38px;
+  font-weight: 700;
+  padding: 0 14px;
+  border-radius: 30px;
+  border: 1px solid deeppink;
+  cursor: pointer;
+  font-size: 14px;
+  background-color: white;
+}
+
+/* DRIVE buttons (car control) */
+.drive-btn {
+  width: 70px;
+  height: 30px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 30px;
+  border: 1px solid deeppink;
+  cursor: pointer;
+  background-color: white;
+}
+
+/* Make STOP stand out */
+.drive-stop {
+  width: 70px;
+  height: 30px;
+  font-size: 10px;
+  font-weight: 700;
+  background-color: #ff7a7a;
+  color: white;
+}
+
+/* CHAT send button (next to input) */
+.chat-btn {
+  height: 35px;
+  padding: 0 14px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 30px;
+  border: 1px solid deeppink;
+  cursor: pointer;
+  background-color: white;
+}
+
+/* Hover for all your button types */
+.mode-btn:hover,
+.chat-btn:hover {
+    background-color: lightsteelblue;
+}
+
+.drive-btn:not(.drive-stop):hover {
+    background-color: lightsteelblue;
+}
+
+.drive-stop:hover {
+  background-color: #ff2b2b;
+}
+
+#controlContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+}
+
+#middleRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#sensorStatus {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+#distanceText{
+  margin-top: 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.sensor {
+    background-color: deepskyblue;
+    width: 100px;
+    height: 20px;
+    border-radius: 40%;
+    margin-bottom: 15px;
+}
+
+#leftSensor {
+    transform: rotate(-20deg) translateY(20px);
+    margin-right: 30px;
+}
+
+#centerSensor {
+    margin: 0 10px;
+}
+
+#rightSensor {
+    transform: rotate(20deg) translateY(20px);
+    margin-left: 30px;
+}
