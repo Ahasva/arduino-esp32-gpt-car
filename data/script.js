@@ -53,8 +53,9 @@ document.getElementById('autopilotStartBtn').addEventListener('click', () => {
 });
 
 document.getElementById('autopilotStopBtn').addEventListener('click', async () => {
-    addMessage("Autopilot STOP", "assistant");
     await stopAutopilotAndCar();
+    addMessage("Autopilot STOP", "assistant");
+    
 });
 
 document.getElementById('submitButton').addEventListener('click', () => {
