@@ -21,6 +21,7 @@ document.getElementById('chatModeButton').addEventListener('click', () => {
 });
 
 document.getElementById('carModeButton').addEventListener('click', () => {
+    autopilotRunning = false;
     mode = 'car';
     addMessage("Car mode activated!", "assistant");
     document.getElementById('carControlContainer').style.display = 'block';
