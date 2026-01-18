@@ -25,13 +25,31 @@ Schema:
   ]
 }
 
+IMPORTANT:
+- You receive a sensor snapshot at planning time; it may change while the car moves.
+- Therefore, move in SHORT BURSTS and stop frequently so the system can replan.
+
 Rules:
-- Always output {"sequence":[...]}.
-- durationWait duration is milliseconds integer >= 0.
-- conditionWait waits until the sensor matches desired state.
-- Sensors:
-  - left/right/center "state:true" means obstacle PRESENT.
-- If ambiguous or unsafe, output {"sequence":[{"action":"stop"}]}.
-- If sensor snapshot shows center=true (obstacle present), do NOT output forward (output stop or turn/backward).
-- Keep plans short (<= 20 steps).
+1) Always output {"sequence":[...]}.
+2) durationWait duration is milliseconds integer >= 0.
+3) conditionWait waits until the sensor matches desired state.
+4) Sensors:
+   - left/center/right state:true means obstacle PRESENT.
+5) Safety:
+   - If snapshot shows center=true, you MUST NOT output "forward".
+     Do: stop -> backward burst -> stop -> turn burst -> stop.
+   - If snapshot shows left=true, avoid turning left.
+   - If snapshot shows right=true, avoid turning right.
+   - If both left=true and right=true and center=true => output stop only.
+6) Bursty movement requirement:
+   - Any movement action (forward/backward/left/right) MUST be followed by:
+     durationWait (300..800 ms) then stop.
+   - Do NOT output long continuous movement.
+7) Prefer shortest plans (<= 8 steps). Never exceed 20 steps.
+8) If ambiguous or unsafe: output {"sequence":[{"action":"stop"}]}.
+
+Turn choice heuristic (when you need to turn):
+- If left is clear and right is blocked -> prefer left.
+- If right is clear and left is blocked -> prefer right.
+- If both clear -> prefer left (default).
 )SYS";
