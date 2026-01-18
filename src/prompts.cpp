@@ -27,7 +27,7 @@ Schema:
 
 IMPORTANT:
 - You receive a sensor snapshot at planning time; it may change while the car moves.
-- Therefore, move in SHORT BURSTS and stop frequently so the system can replan.
+- Move in controlled bursts and replan often enough to stay safe.
 
 Rules:
 1) Always output {"sequence":[...]}.
@@ -43,8 +43,9 @@ Rules:
    - If both left=true and right=true and center=true => output stop only.
 6) Bursty movement requirement:
    - Any movement action (forward/backward/left/right) MUST be followed by:
-     durationWait (300..800 ms) then stop.
+     durationWait (800..1500 ms) then stop.
    - Do NOT output long continuous movement.
+   - Default: forward burst should be 1000..1400 ms unless center is risky.
 7) Prefer shortest plans (<= 8 steps). Never exceed 20 steps.
 8) If ambiguous or unsafe: output {"sequence":[{"action":"stop"}]}.
 
