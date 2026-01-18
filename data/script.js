@@ -1,12 +1,20 @@
 let mode = 'chat';
+let autopilotRunning = false;
+let autopilotGoal = "";
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 document.getElementById('weatherModeButton').addEventListener('click', () => {
+    autopilotRunning = false;
     mode = 'weather';
     addMessage("Weather mode activated!", "assistant");
     document.getElementById('carControlContainer').style.display = 'none';
 });
 
 document.getElementById('chatModeButton').addEventListener('click', () => {
+    autopilotRunning = false;
     mode = 'chat';
     addMessage("Chat mode activated!", "assistant");
     document.getElementById('carControlContainer').style.display = 'none';
@@ -16,6 +24,28 @@ document.getElementById('carModeButton').addEventListener('click', () => {
     mode = 'car';
     addMessage("Car mode activated!", "assistant");
     document.getElementById('carControlContainer').style.display = 'block';
+});
+
+document.getElementById('autopilotStartBtn').addEventListener('click', () => {
+    if (autopilotRunning) {
+        addMessage("Autopilot already running.", "assistant");
+        return;
+    }
+    const goal = document.getElementById('userInput').value.trim();
+    if (!goal) {
+        alert("Type an autopilot goal into the input first.");
+        return;
+    }
+    autopilotGoal = goal;
+    autopilotRunning = true;
+    addMessage("Autopilot START: " + autopilotGoal, "assistant");
+    autopilotLoop();
+});
+
+document.getElementById('autopilotStopBtn').addEventListener('click', async () => {
+    autopilotRunning = false;
+    addMessage("Autopilot STOP", "assistant");
+    try { await fetch('/stopAll', { method: 'POST' }); } catch {}
 });
 
 document.getElementById('submitButton').addEventListener('click', () => {
@@ -121,18 +151,67 @@ function fetchCarResponse(userInput) {
   });
 }
 
+async function autopilotLoop() {
+    while (autopilotRunning) {
+        try {
+        // 1) plan
+        const planResp = await fetch('/carPlan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: autopilotGoal })
+        });
+
+        const plan = await planResp.json();
+        if (!planResp.ok || !plan || !plan.sequence) {
+            addMessage("Autopilot plan error: " + (plan.error || "no sequence"), "assistant");
+            await sleep(600);
+            continue;
+        }
+
+        // (optional) show plan sometimes; comment out if spammy
+        // addMessage("Plan: " + JSON.stringify(plan), "assistant");
+
+        // 2) execute
+        const execResp = await fetch('/carExec', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(plan)
+        });
+
+        const exec = await execResp.json();
+
+        // 3) decision
+        if (exec.ok) {
+            await sleep(150); // small pacing delay
+        } else {
+            addMessage("Autopilot blocked: " + (exec.error || "unknown") + " → replanning...", "assistant");
+            await sleep(500);
+        }
+
+        } catch (err) {
+        console.error("autopilot error:", err);
+        addMessage("Autopilot error → retrying...", "assistant");
+        await sleep(800);
+        }
+    }
+
+    // ensure stop when leaving autopilot
+    try { await fetch('/stopAll', { method: 'POST' }); } catch {}
+}
+
 function sendCommand(command) {
-  fetch('/car', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ command })
-  })
-  .then(r => r.json())
-  .then(res => {
-    console.log("car:", res);
-    if (!res.ok) addMessage("Manual drive error: " + (res.error || "unknown"), "assistant");
-  })
-  .catch(err => console.error("car error:", err));
+    if (command === "stop") autopilotRunning = false;
+    fetch('/car', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command })
+    })
+    .then(r => r.json())
+    .then(res => {
+        console.log("car:", res);
+        if (!res.ok) addMessage("Manual drive error: " + (res.error || "unknown"), "assistant");
+    })
+    .catch(err => console.error("car error:", err));
 }
 
 function getObstacleStatus() {
@@ -178,9 +257,16 @@ window.onload = function() {
     getObstacleStatus();
 };
 
-window.addEventListener("blur", () => sendCommand("stop"));
+window.addEventListener("blur", () => {
+  autopilotRunning = false;
+  sendCommand("stop");
+});
+
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden) sendCommand("stop");
+  if (document.hidden) {
+    autopilotRunning = false;
+    sendCommand("stop");
+  }
 });
 
 setInterval(getObstacleStatus, 1000);
