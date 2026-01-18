@@ -192,10 +192,10 @@ async function autopilotLoop() {
 
         // 3) decision
         if (exec.ok) {
-            await sleep(400); // small pacing delay
+            await sleep(50); // small pacing delay
         } else {
             addMessage("Autopilot blocked: " + (exec.error || "unknown") + " → replanning...", "assistant");
-            await sleep(500);
+            await sleep(400);
         }
 
         } catch (err) {
